@@ -13,10 +13,10 @@ public class MyArray {
                 this.myArray[i][j] = myArray[i][j];
             }
         }
-        LOGGER.info(printMatrix());
+        LOGGER.info("\n" + printMatrix());
 
         fillingTheMainDiagonal();
-        LOGGER.info(printMatrix());
+        LOGGER.info("\n" + printMatrix());
     }
 
     private void fillingTheMainDiagonal() {
@@ -42,11 +42,11 @@ public class MyArray {
         StringBuffer string = new StringBuffer();
         for (int i = 0; i < this.myArray.length; i++) {
             for (int j = 0; j < this.myArray[i].length; j++) {
-                string.append(this.myArray[i][j]).append(", ");
+                string.append(this.myArray[i][j]).append(" ");
             }
             string.append("\n");
         }
-        return "\n" + string ;
+        return  string.toString();
     }
 
 }
