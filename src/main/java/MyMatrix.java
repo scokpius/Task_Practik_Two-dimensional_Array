@@ -1,12 +1,12 @@
 import org.apache.log4j.LogManager;
 import org.apache.log4j.Logger;
 
-public class MyArray {
+public class MyMatrix {
     private final static Integer elementNull=0;
     private Integer myArray[][];
-    private static final Logger LOGGER = LogManager.getLogger(MyArray.class);
+    private static final Logger LOGGER = LogManager.getLogger(MyMatrix.class);
 
-    public MyArray(Integer[][] myArray, int lengthColumn, int lengthRow) {
+    public MyMatrix(Integer[][] myArray, int lengthColumn, int lengthRow) {
         this.myArray = new Integer[lengthColumn][lengthRow];
         for (int i = 0; i < lengthColumn; i++) {
             for (int j = 0; j < lengthColumn; j++) {
@@ -18,6 +18,11 @@ public class MyArray {
         fillingTheMainDiagonal();
         LOGGER.info("\n" + printMatrix());
     }
+
+    public Integer[][] getMyArray() {
+        return myArray;
+    }
+
 
     private void fillingTheMainDiagonal() {
         for (int i = 0; i < this.myArray.length; i++) {
@@ -35,6 +40,7 @@ public class MyArray {
 
     @Override
     public String toString() {
+
         return printMatrix() ;
     }
 
@@ -42,7 +48,7 @@ public class MyArray {
         StringBuffer string = new StringBuffer();
         for (int i = 0; i < this.myArray.length; i++) {
             for (int j = 0; j < this.myArray[i].length; j++) {
-                string.append(this.myArray[i][j]).append(" ");
+                string.append(String.format( "%2d",this.myArray[i][j])).append(" ");
             }
             string.append("\n");
         }
