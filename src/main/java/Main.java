@@ -11,55 +11,63 @@ public class Main {
     private static final Logger LOGGER = LogManager.getLogger(MyMatrix.class);
 
     public static void main(String[] args) {
-        int size = (int) (Math.random() * 8) + 2;
-        Integer[][] array = new Integer[size][size];
+
+
         Scanner in = new Scanner(System.in);
         System.out.print("Input a file name (matrixIn.txt): ");
         String fileName = in.next();
         String fileRead = Helper.getPath("/main/java/textFile/" + fileName , Main.class);
         String fileWriter = Helper.getPath("/main/java/textFile/matrixOut.txt", Main.class);
-        StringBuilder text = new StringBuilder();
 
-        createMatrixAndWriteToFile(array, fileRead);
-        readFromFile(fileRead, text);
-        fillingDiagonalAndWriteToFile(fileWriter, text);
+
+        // createMatrix() рандомно созданет и возвращает матрицу
+        writeToFile(createMatrix(), fileRead);// записывает матрицу в файл
+        // readFromFile(fileRead); считывает матрицу с файла и преобразовывает
+        matrixDiagonalWriteToFile(readFromFile(fileRead), fileWriter);
 
     }
 
-    private static void fillingDiagonalAndWriteToFile(String fileWriter, StringBuilder text) {
-        Integer[][] arrayRead;
-        MyMatrix myMatrix;
+    private static void matrixDiagonalWriteToFile(MyMatrix myMatrix, String fileWriter) {
+
         try (PrintWriter writer = new PrintWriter(new FileWriter(fileWriter))) {
-            String line1 = text.toString();
-            String[] string = line1.trim().split("\n");
-            String[] length = string[0].trim().split(" ");
-            // определение размеров считываемого массива
-            int lengthColumn = Integer.parseInt(length[0]);
-            int lengthRow = Integer.parseInt(length[0]);
-            // преобразовывает текст а Integer матрицу
-            arrayRead = convertFromStringToArray(string, lengthColumn, lengthRow);
-            myMatrix = new MyMatrix(arrayRead, lengthColumn,lengthRow);
             writer.print(myMatrix); // запись в фыйл матрицы с диогональю
         } catch (IOException e) {
             LOGGER.info("File not found");
         }
     }
 
-    private static void readFromFile(String fileRead, StringBuilder text) {
+    private static MyMatrix  readFromFile(String fileRead) {
+        StringBuilder text = new StringBuilder();
+        MyMatrix myMatrix = null;
         try (BufferedReader reader = new BufferedReader(new FileReader(fileRead))) {
-
             String line;
             while ((line = reader.readLine()) != null) {
                 text.append(line).append("\n");
             }
+            Integer[][] arrayRead;
+            String line1 = text.toString();
+            String[] string = line1.trim().split("\n");
+            Integer[] size = determiningSizeTheReadArray(string);
+            // преобразовывает текст а Integer матрицу
+            arrayRead = convertFromStringToArray(string, size[0], size[1]);
+            myMatrix = new MyMatrix(arrayRead, size[0], size[1]);
         } catch (IOException e) {
             LOGGER.info("File not found");
         }
+        return myMatrix;
     }
 
-    private static void createMatrixAndWriteToFile(Integer[][] array, String fileRead) {
+    private static Integer[] determiningSizeTheReadArray(String[] string){
+        String[] length = string[0].trim().split(" ");
+        Integer[] arraySize = new Integer[length.length];
+        // определение размеров считываемого массива
+        arraySize[0] = Integer.parseInt(length[0]);
+        arraySize[1]  = Integer.parseInt(length[1]);
+        return arraySize;
+    }
+
+    private static void writeToFile(Integer[][] array, String fileRead) {
         try (PrintWriter writer1 = new PrintWriter(new FileWriter(fileRead))) {
-            createMatrix(array);// рандомное создание матрицы
             writer1.print(printStringMatrix(array)); // запись матрицы в файл
             writer1.flush();
         } catch (IOException e) {
@@ -85,26 +93,29 @@ public class Main {
         return myArrayRead;
     }
 
-    protected static void createMatrix(Integer[][] myArray) {
-        for (int i = 0; i < myArray.length; i++) {
-            for (int j = 0; j < myArray[0].length; j++) {
+    protected static Integer[][] createMatrix() {
+        int size = (int) (Math.random() * 8) + 2;
+        Integer[][] array = new Integer[size][size];
+        for (int i = 0; i < array.length; i++) {
+            for (int j = 0; j < array[0].length; j++) {
                 int element = (int) (Math.random() * 2);
-                myArray[i][j] = element % 3;
+                array[i][j] = element % 3;
             }
             int count = 1;
-            for (int j = 0; j < myArray[0].length; j++) {
-                if (myArray[i][j] == 0) {
+            for (int j = 0; j < array[0].length; j++) {
+                if (array[i][j] == 0) {
                     if (count > 1) {
                         int number;
                         do {
                             number = (int) (Math.random() * 14) - 5;
                         }while (number == 0);
-                        myArray[i][j] = number;
+                        array[i][j] = number;
                     }
                     count++;
                 }
             }
         }
+        return array;
     }
 
     static String printStringMatrix(Integer[][] array) {

@@ -40,7 +40,7 @@ public class MatrixTest {
         } catch (IOException e) {
             e.printStackTrace();
         }
-        Main.createMatrix(array);
+     //   Main.createMatrix(array);
         writer1.print(Main.printStringMatrix(array)); // запись матрицы в файл
         writer1.flush();
         writer1.close();
