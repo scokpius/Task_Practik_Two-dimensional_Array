@@ -7,54 +7,66 @@ import java.util.Arrays;
 import java.util.Scanner;
 
 public class Main {
+
+    private static final Logger LOGGER = LogManager.getLogger(MyMatrix.class);
+
     public static void main(String[] args) {
         int size = (int) (Math.random() * 8) + 2;
         Integer[][] array = new Integer[size][size];
-        Integer[][] myArrayRead;
-        MyMatrix myMatrix;
-        final Logger LOGGER = LogManager.getLogger(MyMatrix.class);
         Scanner in = new Scanner(System.in);
         System.out.print("Input a file name (matrixIn.txt): ");
         String fileName = in.next();
         String fileRead = Helper.getPath("/main/java/textFile/" + fileName , Main.class);
         String fileWriter = Helper.getPath("/main/java/textFile/matrixOut.txt", Main.class);
         StringBuilder text = new StringBuilder();
-        
-        try (BufferedReader reader = new BufferedReader(new FileReader(fileRead));
-             PrintWriter writer = new PrintWriter(new FileWriter(fileWriter));
-             PrintWriter writer1 = new PrintWriter(new FileWriter(fileRead))) {
 
-            createMatrix(array);// рандомное создание матрицы
-            writeToFile(array, writer1); // запись матрицы в файл с указанием размеров
-            readFromFile(text, reader); //считывание с файла построчно
+        createMatrixAndWriteToFile(array, fileRead);
+        readFromFile(fileRead, text);
+        fillingDiagonalAndWriteToFile(fileWriter, text);
 
+    }
+
+    private static void fillingDiagonalAndWriteToFile(String fileWriter, StringBuilder text) {
+        Integer[][] arrayRead;
+        MyMatrix myMatrix;
+        try (PrintWriter writer = new PrintWriter(new FileWriter(fileWriter))) {
             String line1 = text.toString();
             String[] string = line1.trim().split("\n");
             String[] length = string[0].trim().split(" ");
             // определение размеров считываемого массива
             int lengthColumn = Integer.parseInt(length[0]);
             int lengthRow = Integer.parseInt(length[0]);
-
-            myArrayRead = convertFromStringToArray(string, lengthColumn, lengthRow);
-            myMatrix = new MyMatrix(myArrayRead, lengthColumn,lengthRow);
+            // преобразовывает текст а Integer матрицу
+            arrayRead = convertFromStringToArray(string, lengthColumn, lengthRow);
+            myMatrix = new MyMatrix(arrayRead, lengthColumn,lengthRow);
             writer.print(myMatrix); // запись в фыйл матрицы с диогональю
         } catch (IOException e) {
             LOGGER.info("File not found");
         }
     }
 
-    private static void readFromFile(StringBuilder text, BufferedReader reader) throws IOException {
-        String line;
-        while ((line = reader.readLine()) != null) {
-            text.append(line).append("\n");
+    private static void readFromFile(String fileRead, StringBuilder text) {
+        try (BufferedReader reader = new BufferedReader(new FileReader(fileRead))) {
+
+            String line;
+            while ((line = reader.readLine()) != null) {
+                text.append(line).append("\n");
+            }
+        } catch (IOException e) {
+            LOGGER.info("File not found");
         }
     }
 
-    private static void writeToFile(Integer[][] array, PrintWriter writer1) {
-        writer1.print(printStringMatrix(array)); // запись матрицы в файл
-        writer1.flush();
-        writer1.close();
+    private static void createMatrixAndWriteToFile(Integer[][] array, String fileRead) {
+        try (PrintWriter writer1 = new PrintWriter(new FileWriter(fileRead))) {
+            createMatrix(array);// рандомное создание матрицы
+            writer1.print(printStringMatrix(array)); // запись матрицы в файл
+            writer1.flush();
+        } catch (IOException e) {
+            LOGGER.info("File not found");
+        }
     }
+
 
     static Integer[][] convertFromStringToArray(String[] string, int lengthColumn, int lengthRow) {
         Integer[][] myArrayRead;
